@@ -1,0 +1,78 @@
+#!/bin/sh
+
+DAEMON_FILE=/etc/icryptonode/daemon/monero/monerod
+BLOCKCHAIN_DIR=/etc/icryptonode/blockchain
+
+LOG_FILE=/etc/icryptonode/blockchain/bitmonero.log
+LOG_ROWS="200"
+
+DAEMON_ENABLED="$(uci get icryptonode.@info[0].daemon_enabled)"
+
+DAEMON_USER="$(uci get icryptonode.@info[0].daemon_user)"
+DAEMON_PASS="$(uci get icryptonode.@info[0].daemon_pass)"
+DAEMON_RPC_PORT="$(uci get icryptonode.@info[0].daemon_rpc_port)"
+
+CMD="$1"
+
+monero_stop () {
+    PIDOF=$(ps aux | egrep monerod.--detach | egrep  -v grep | awk '{print $2}')
+    if [ -n "$PIDOF" ]; then
+        echo "Stopping monero (PID = $PIDOF)"
+        $DAEMON_FILE --log-file $LOG_FILE --data-dir $BLOCKCHAIN_DIR --rpc-bind-ip 0.0.0.0 --rpc-login $DAEMON_USER:$DAEMON_PASS --rpc-bind-port $DAEMON_RPC_PORT --confirm-external-bind exit
+    fi
+}
+
+monero_start () {
+
+    if [ "$DAEMON_ENABLED" = "no" ]; then
+        echo "DAEMON_ENABLED = no, not starting monero"
+        exit 1
+    fi
+    echo "Starting monero"
+    $DAEMON_FILE --detach --db-salvage --log-file $LOG_FILE --data-dir $BLOCKCHAIN_DIR --rpc-bind-ip 0.0.0.0 --rpc-login $DAEMON_USER:$DAEMON_PASS --rpc-bind-port $DAEMON_RPC_PORT --confirm-external-bind
+}
+
+monero_restart () {
+    monero_stop
+    sleep 6
+    monero_start
+}
+
+if [ "$CMD" = "logs" ]; then
+    
+    tail -n"$LOG_ROWS" "$LOG_FILE"
+
+elif [ "$CMD" = "status" ]; then
+
+    PIDOF=$(ps aux | egrep monerod.--detach | egrep  -v grep | awk '{print $2}')
+    
+    if [ -n "$PIDOF" ]; then
+        echo "Monero running (PIDOF = $PIDOF)"
+        exit 5
+    else
+        exit 4
+    fi
+
+elif [ "$CMD" = "stop" ]; then
+    
+    monero_stop
+    exit 0
+
+elif [ "$CMD" = "start" ]; then
+    
+    monero_start
+    exit 0
+
+elif [ "$CMD" = "restart" ]; then
+    
+    monero_restart
+    exit 0
+
+elif [ "$CMD" = "version" ]; then
+    
+    $DAEMON_FILE --version
+
+else
+    exit 9
+fi
+

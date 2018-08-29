@@ -1,0 +1,104 @@
+#!/bin/sh
+
+usage () {
+    echo "\niCryptoNode Configuration Program"
+    echo "Usage: icn_configure [monero]\n"
+    exit 0
+}
+
+print_info () {
+    echo "\n====> $1\n"
+}
+
+if [ -z "$1" ]; then
+    usage
+
+elif [ "$1" == "monero" ]; then
+    print_info "Configuring a monero node"
+
+else
+    print_info "Error: unknown node type '$1'"
+    usage
+fi
+
+ROOT_DIR=/var/www/html/icryptonode
+
+print_info "Installing required packages"
+sudo apt-get update
+sudo apt-get install ufw openvpn unzip lighttpd cmake dh-autoreconf git \
+    lua5.1 liblua5.1-0-dev php7.0-fpm php7.0-cgi php-pear php7.0-dev \
+    libgpgme11 libgpgme-dev dnsutils
+
+
+print_info "Installing PHP extensions"
+sudo pecl install gnupg
+
+print_info "Creating icryptonode daemon dirs"
+sudo mkdir /etc/icryptonode
+sudo mkdir /etc/icryptonode/daemon
+sudo mkdir /etc/icryptonode/blockchain
+sudo cp ./fix_folders.sh /etc/icryptonode
+
+print_info "Importing iCryptoNode official PGP public key"
+sudo mkdir /etc/icryptonode/.gnupg
+sudo gpg --import --homedir /etc/icryptonode/.gnupg ./iCryptoNode_Official_PGP_Key.txt 
+
+print_info "Changing ownership to www-data user"
+sudo chown -R www-data:www-data /etc/icryptonode
+
+print_info "Enabling lighttpd extensions"
+sudo lighty-enable-mod fastcgi 
+sudo lighty-enable-mod fastcgi-php
+sudo service lighttpd force-reload
+
+print_info "Moving iCryptoNode web software into place"
+sudo cp -R ../icryptonode $ROOT_DIR
+
+print_info "Creating VPN auth file"
+touch $ROOT_DIR/vpn/auth
+$ROOT_DIR/vpn/commands/change_pia_auth REPLACE_ME nothing
+
+sudo chown -R www-data:www-data $ROOT_DIR
+
+
+if [ "$1" == "monero" ]; then
+    print_info "Opening up monero daemon ports"
+    sudo ufw allow 18080
+    sudo ufw allow 18081
+fi
+
+# Set crons and enable them
+print_info "Creating crontab entries"
+echo 'PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games' >> mycron
+echo "*/1 * * * * $ROOT_DIR/cron/vpn_cron" >> mycron
+echo "*/1 * * * * $ROOT_DIR/cron/daemon_cron" >> mycron
+echo "*/1 * * * * $ROOT_DIR/cron/icn_update" >> mycron
+sudo crontab mycron
+rm mycron
+
+
+print_info "Setting UCI variables"
+
+sudo mkdir /etc/config
+touch /etc/config/icryptonode
+uci add icryptonode info
+uci set icryptonode.@info[0].version='1'
+uci set icryptonode.@info[0].vpn_enabled='no'
+uci set icryptonode.@info[0].vpn_file='US_East.ovpn'
+uci set icryptonode.@info[0].daemon_version='1'
+uci set icryptonode.@info[0].daemon_enabled='yes'
+uci set icryptonode.@info[0].daemon_user='icryptonode'
+uci set icryptonode.@info[0].daemon_pass='salmonsushi'
+
+uci set icryptonode.@info[0].is_updating='no'
+
+if [ "$1" == "monero" ]; then
+    uci set icryptonode.@info[0].node_type='monero'
+    uci set icryptonode.@info[0].daemon_rpc_port='18081'
+fi
+
+sudo uci commit
+sudo chown -R www-data:www-data /etc/config
+
+
+echo "iCryptoNode configuration success!"

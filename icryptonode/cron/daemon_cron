@@ -1,0 +1,47 @@
+#!/bin/sh
+
+# VERY IMPORTANT this file is always in /var/www/html/icryptonode/vpn/daemon_cron
+# or the crontab will fail
+
+export LD_LIBRARY_PATH=/usr/local/lib
+
+# See if daemon is enabled by the user, and if not, exit
+DAEMON_ENABLED="$(sudo uci get icryptonode.@info[0].daemon_enabled)"
+
+if [ "$DAEMON_ENABLED" != "yes" ]; then
+    echo "daemon_cron: daemon not enabled by user, exiting"
+    exit 0
+fi
+
+# See if things are being updated, and if so, exit
+IS_UPDATING="$(sudo uci get icryptonode.@info[0].is_updating)"
+
+if [ "$IS_UPDATING" != "no" ]; then
+    echo "daemon_cron: system being updated, exiting"
+    exit 0
+fi
+
+NODE_TYPE="$(sudo uci get icryptonode.@info[0].node_type)"
+
+DAEMON_FILE="/var/www/html/icryptonode/node_commands/$NODE_TYPE"
+
+$DAEMON_FILE status
+
+STATUS_CODE=$(echo $?)
+
+
+if [ "$STATUS_CODE" = "5" ]; then
+    # Node running
+    echo "daemon_cron: node running, not doing anything"
+
+elif [ "$STATUS_CODE" = "4" ]; then
+    # Node not running, start it
+    echo "daemon_cron: node not running, starting node"
+    $DAEMON_FILE start
+else
+    echo "daemon_cron: unknown status code $STATUS_CODE"
+    exit 1
+fi
+
+echo "daemon_cron: Made it to normal end of script, exiting"
+exit 0

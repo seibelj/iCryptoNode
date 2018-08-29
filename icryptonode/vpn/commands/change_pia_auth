@@ -1,0 +1,11 @@
+#!/bin/sh
+
+VPN_DIR=/var/www/html/icryptonode/vpn
+
+rm $VPN_DIR/auth
+touch $VPN_DIR/auth
+echo "$1" >> $VPN_DIR/auth
+echo "$2" >> $VPN_DIR/auth
+chmod 0660 $VPN_DIR/auth
+
+exit 0

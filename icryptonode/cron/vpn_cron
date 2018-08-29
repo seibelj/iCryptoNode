@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# VERY IMPORTANT this file is always in /var/www/html/icryptonode/cron/vpn_cron
+# or the crontab will fail
+
+export LD_LIBRARY_PATH=/usr/local/lib
+
+# See if VPN is enabled by the user, and if not, exit
+VPN_ENABLED=$(sudo uci get icryptonode.@info[0].vpn_enabled)
+
+if [ "$VPN_ENABLED" != "yes" ]; then
+    echo "vpn_cron: VPN not enabled by user, exiting"
+    exit 0
+fi
+
+VPN_DIR=/var/www/html/icryptonode/vpn
+
+# See if internet is accessible. If it isn't, either no internet period,
+# or internet exists but VPN hanging.
+$VPN_DIR/commands/get_internet_status
+INTERNET_STATUS=$(echo $?)
+
+
+PIDOF=$(ps aux | egrep openvpn.--writepid | egrep  -v grep | awk '{print $2}')
+echo "vpn_cron: current PID of openvpn: $PIDOF"
+
+# We have internet
+if [ "$INTERNET_STATUS" = "0" ]; then
+    
+    if [ -z "$PIDOF" ]; then
+        # Internet, but no VPN running, let's start it
+        echo "vpn_cron: Internet but no VPN running, starting it"
+        $VPN_DIR/commands/vpn_control start
+    fi
+else
+    if [ -z "$PIDOF" ]; then
+        # No internet and no VPN
+        echo "vpn_cron: No internet and no VPN, can't start up, exiting"
+        exit 0
+    else
+        # No internet but VPN running, let's restart VPN
+        echo "vpn_cron: No internet but VPN running, restarting it"
+        $VPN_DIR/commands/vpn_control restart
+    fi
+fi
+
+echo "vpn_cron: Made it to normal end of script, exiting"
+exit 0

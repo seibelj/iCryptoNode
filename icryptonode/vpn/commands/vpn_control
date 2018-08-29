@@ -1,0 +1,44 @@
+#!/bin/sh
+
+export LD_LIBRARY_PATH=/usr/local/lib
+
+VPN_DIR=/var/www/html/icryptonode/vpn
+
+vpn_stop () {
+    PIDOF=$(ps aux | egrep openvpn.--writepid | egrep  -v grep | awk '{print $2}')
+    if [ -n "$PIDOF" ]; then
+        sudo kill ${PIDOF}
+    fi
+}
+
+vpn_start () {
+    PIDOF=$(ps aux | egrep openvpn.--writepid | egrep  -v grep | awk '{print $2}')
+    if [ -z "$PIDOF" ]; then
+        VPN_CONFIG=$(uci get icryptonode.@info[0].vpn_file)
+        sudo openvpn --writepid /tmp/ovpn_ciberterminal.pid --daemon --cd $VPN_DIR --config $VPN_CONFIG
+    fi
+}
+
+vpn_restart () {
+    vpn_stop
+    sleep 3
+    vpn_start
+}
+
+    
+if [ "$1" = "start" ]; then
+    vpn_start
+    exit 0    
+
+elif [ "$1" = "restart" ]; then
+    vpn_restart
+    exit 0
+
+elif [ "$1" = "stop" ]; then   
+    vpn_stop
+    exit 0
+
+else
+    exit 1
+fi
+

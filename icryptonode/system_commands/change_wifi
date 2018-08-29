@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Overwrites wpa_supplicant.conf with new wifi creds and restarts dhcpcd
+# Must be run as sudo
+
+WPA_FILE=/etc/wpa_supplicant/wpa_supplicant.conf
+
+echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev" > $WPA_FILE
+echo "update_config=1" >> $WPA_FILE
+echo "country=US\n" >> $WPA_FILE
+echo "network={" >> $WPA_FILE
+echo "\tssid=\"$1\"" >> $WPA_FILE
+echo "\tpsk=\"$2\"" >> $WPA_FILE
+echo "}\n" >> $WPA_FILE
+
+sudo systemctl daemon-reload
+sudo systemctl restart dhcpcd

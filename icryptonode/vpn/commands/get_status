@@ -1,0 +1,21 @@
+#!/bin/sh
+
+ROOT_DIR=/var/www/html/icryptonode
+
+CURRENT_VPN_USERNAME="$(head -n1 $ROOT_DIR/vpn/auth)"
+PUBLIC_FACING_IP="$(curl ipinfo.io/ip 2>/dev/null)"
+VPN_ENABLED=$(uci get icryptonode.@info[0].vpn_enabled)
+VPN_FILE=$(uci get icryptonode.@info[0].vpn_file)
+
+TEMP="$(ps aux | egrep openvpn.--writepid | egrep  -v grep | awk '{print $2}')"
+if [ -z $TEMP ]; then
+    VPN_STATUS='down'
+else
+    VPN_STATUS='up'
+fi
+
+echo "{\"current_vpn_username\":\"$CURRENT_VPN_USERNAME\",\
+\"vpn_status\":\"$VPN_STATUS\",\
+\"vpn_enabled\":\"$VPN_ENABLED\",\
+\"vpn_file\":\"$VPN_FILE\",\
+\"public_ip\":\"$PUBLIC_FACING_IP\"}"

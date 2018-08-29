@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# VERY IMPORTANT this file is always in /var/www/html/icryptonode/cron/icn_update
+# or the crontab will fail
+
+export LD_LIBRARY_PATH=/usr/local/lib
+
+# See if things are being updated, and if so, exit
+IS_UPDATING="$(uci get icryptonode.@info[0].is_updating)"
+
+if [ "$IS_UPDATING" != "no" ]; then
+    echo "icn_update: system already being updated, exiting"
+    exit 0
+fi
+
+# This script will be run by a cron regularly by the system.
+# If an iCryptoNode update file is present, this should remove the old version
+# (including this file) and install the new one, then remove the old tar.gz file.
+
+UPDATE_FILE=/etc/icryptonode/icn.tar.gz
+
+# No update file present
+if [ ! -f "$UPDATE_FILE" ]; then
+    echo "icn_update: update file $UPDATE_FILE not found, exiting"
+    exit 0
+fi
+
+# Disable crons
+sudo uci set icryptonode.@info[0].is_updating='yes'
+sudo uci commit
+
+# Rename to prevent a race condition if this script is executed twice
+sudo mv /etc/icryptonode/icn.tar.gz /etc/icryptonode/icn_copy.tar.gz
+
+# Preserve VPN auth
+sudo mv /var/www/html/icryptonode/vpn/auth /tmp/auth_bk
+
+# Remove old version of iCryptoNode
+sudo rm -rf /var/www/html/icryptonode
+
+# Extract new
+sudo tar xzf /etc/icryptonode/icn_copy.tar.gz -C /var/www/html/
+
+# VPN back in place
+sudo mv /tmp/auth_bk /var/www/html/icryptonode/vpn/auth
+
+# Run the update script, if present
+UPDATE_SCRIPT=/var/www/html/icryptonode/system_commands/update
+if [ -f "$UPDATE_SCRIPT" ]; then
+    echo "icn_update: running update script $UPDATE_SCRIPT"
+    sudo $UPDATE_SCRIPT
+else
+    echo "icn_update: update script $UPDATE_SCRIPT not found, not running"
+fi
+
+# Change to www-data ownership
+sudo chown -R www-data:www-data /var/www/html/icryptonode
+
+# Out the old, in with the new!
+sudo rm /etc/icryptonode/icn_copy.tar.gz
+
+# Re-enable crons
+sudo uci set icryptonode.@info[0].is_updating='no'
+sudo uci commit
+
+echo "icn_update: update success"
+
+exit 0
