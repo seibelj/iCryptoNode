@@ -1,0 +1,130 @@
+{
+    "authorization_codes": {
+        "testcode": {
+            "client_id": "Test Client ID",
+            "user_id": "",
+            "redirect_uri": "",
+            "expires": "9999999999"
+        },
+        "testcode-with-scope": {
+            "client_id": "Test Client ID",
+            "user_id": "",
+            "redirect_uri": "",
+            "expires": "9999999999",
+            "scope": "scope1 scope2"
+        },
+        "testcode-expired": {
+            "client_id": "Test Client ID",
+            "user_id": "",
+            "redirect_uri": "",
+            "expires": "1356998400"
+        },
+        "testcode-empty-secret": {
+            "client_id": "Test Client ID Empty Secret",
+            "user_id": "",
+            "redirect_uri": "",
+            "expires": "9999999999"
+        }
+    },
+    "client_credentials" : {
+        "Test Client ID": {
+            "client_secret": "TestSecret"
+        },
+        "Test Client ID with Redirect Uri": {
+            "client_secret": "TestSecret2",
+            "redirect_uri": "http://brentertainment.com"
+        },
+        "Test Client ID with Multiple Redirect Uris": {
+            "client_secret": "TestSecret3",
+            "redirect_uri": "http://brentertainment.com http://morehazards.com"
+        },
+        "Test Client ID with Redirect Uri Parts": {
+            "client_secret": "TestSecret4",
+            "redirect_uri": "http://user:pass@brentertainment.com:2222/authorize/cb?auth_type=oauth"
+        },
+        "Test Some Other Client": {
+            "client_secret": "TestSecret3"
+        },
+        "Test Client ID Empty Secret": {
+            "client_secret": ""
+        },
+        "oauth_test_client": {
+            "client_secret": "testpass",
+            "grant_types": "implicit password"
+        }
+    },
+    "user_credentials" : {
+        "test-username": {
+            "password": "testpass"
+        },
+        "testusername":  {
+            "password": "testpass"
+        }
+    },
+    "refresh_tokens" : {
+        "test-refreshtoken": {
+            "refresh_token": "test-refreshtoken",
+            "client_id": "Test Client ID",
+            "user_id": "test-username",
+            "expires": 99999999900,
+            "scope": null
+        },
+        "test-refreshtoken-with-scope": {
+            "refresh_token": "test-refreshtoken",
+            "client_id": "Test Client ID",
+            "user_id": "test-username",
+            "expires": 99999999900,
+            "scope": "scope1 scope2"
+        }
+    },
+    "access_tokens" : {
+        "accesstoken-expired": {
+            "access_token": "accesstoken-expired",
+            "client_id": "Test Client ID",
+            "expires": 1234567,
+            "scope": null
+        },
+        "accesstoken-scope": {
+            "access_token": "accesstoken-scope",
+            "client_id": "Test Client ID",
+            "expires": 99999999900,
+            "scope": "testscope"
+        },
+        "accesstoken-malformed": {
+            "access_token": "accesstoken-mallformed",
+            "expires": 99999999900,
+            "scope": "testscope"
+        }
+    },
+    "jwt": {
+	    "Test Client ID": {
+	        "key": "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC5/SxVlE8gnpFqCxgl2wjhzY7u\ncEi00s0kUg3xp7lVEvgLgYcAnHiWp+gtSjOFfH2zsvpiWm6Lz5f743j/FEzHIO1o\nwR0p4d9pOaJK07d01+RzoQLOIQAgXrr4T1CCWUesncwwPBVCyy2Mw3Nmhmr9MrF8\nUlvdRKBxriRnlP3qJQIDAQAB\n-----END PUBLIC KEY-----",
+	        "subject": "testuser@ourdomain.com"
+	    },
+	    "Test Client ID PHP-5.2": {
+	        "key": "mysecretkey",
+	        "subject": "testuser@ourdomain.com"
+	    },
+	    "Missing Key Client": {
+	        "key": null,
+	        "subject": "testuser@ourdomain.com"
+	    },
+	    "Missing Key Client PHP-5.2": {
+	        "key": null,
+	        "subject": "testuser@ourdomain.com"
+	    }
+    },
+    "client_supported_scopes" : {
+        "Test Client ID" : ["clientscope1", "clientscope2"],
+        "Test Client ID 2" : ["clientscope3"]
+    },
+    "client_default_scopes" : {
+        "Test Default Scope Client ID" : ["clientscope1", "clientscope2"],
+        "Test Default Scope Client ID 2" : ["clientscope3"]
+    },
+    "supported_scopes" : [
+        "scope1",
+        "scope2",
+        "scope3"
+    ]
+}
