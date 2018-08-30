@@ -1,7 +1,7 @@
 VUE_GLOBALS.node = {}
 
 VUE_GLOBALS.node.data = {
-    isActive: false,
+    isActive: true,
     isLoading: false,
     error: "",
     memoryUsed: 0,

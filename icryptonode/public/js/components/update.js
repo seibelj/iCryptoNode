@@ -1,7 +1,7 @@
 VUE_GLOBALS.update = {}
 
 VUE_GLOBALS.update.data = {
-    isActive: true,
+    isActive: false,
     isLoading: false,
     isUpdateAvailable: false,
     latestDaemonVersionShort: "",

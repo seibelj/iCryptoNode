@@ -11,15 +11,20 @@ Anyone can use or build this software. Development is sponsored by [iCryptoNode.
  - Blockchains:
    - Monero
    - *More coming soon*
- - Privacy
+ - Privacy & Security
    - Built-in support for VPN ([Private Internet Access](https://www.privateinternetaccess.com/pages/buy-vpn/easyvpnr))
+   - Use the blockchain without exposing your IP
+   - Stop relying on untrusted third-party remote nodes
+   - Nothing is tracked by us or any service provider
+   - All updates cryptographically signed to prevent tampering
  - Simplify Management
    - Easily update blockchain daemon
    - Easily update iCryptoNode software
    - GUI shows stats and enables quick configuration changes
    - Everything is automatically running on device boot
- - Optimized for low-end systems
+ - Optimized for Raspberry Pi
    - Minimal resource overhead
+   - Swap with minimal use to preserve SD Card lifespan
    - All decisions made to squeeze performance from low-end devices
  - Fault Tolerant
    - Services are restarted automatically
@@ -55,8 +60,19 @@ Once you have your local IP, SSH in (user: `pi`, password: `raspberry`) and do s
 `sudo apt-get update`
 `sudo apt-get upgrade`
 
+Update raspberry pi and install kernel drivers:
+`sudo rpi-update`
+
 Run raspi-config to enable Wifi. You need to do this once to set a Wifi country, and later it can be changed from within iCryptoNode software:
 `sudo raspi-config`
+
+You must now reboot, which will close the SSH tunnel, and you'll have to SSH back in:
+`sudo reboot`
+
+Open port 22 for SSH:
+`sudo ufw allow 22`
+Enable UFW firewall:
+`sudo ufw enable`
 
 ### Install UCI
 
@@ -75,11 +91,16 @@ To:
 
 Then `cmake .`, `make`, `sudo make install`.
 
+### Clone this repository
+
+In your home folder on the raspberry pi:
+`git clone git@github.com:seibelj/iCryptoNode.git`
+
 ### Run the iCryptoNode Config Script
 
 This automatically configures as many things as possible. Unfortunately some things can't (easily) be automated, which is why there are more manual steps after this.
 
-`cd setup`
+`cd iCryptoNode/setup`
 `sudo ./icn_configure monero`
 
 Let it run.
@@ -124,8 +145,9 @@ This restricts `sudo` access for user `www-data` to specific commands.
 
 The current top-of-the-line Raspberry Pi has only 1 GB of ram. We add swap in order to allow ram to be extended by disk in cases where memory is exhausted. However, given that random write to SD cards can wear them out, we want to make the system prefer ram to disk whenever possible.
 
-Remove old swap and make new, bigger swap (2GB):
+Remove old swap and make new, bigger swap (2GB). Some of these commands take a while to run, just be patient.
 ```
+sudo /etc/init.d/dphys-swapfile stop
 sudo rm /var/swap
 sudo dd if=/dev/zero of=/var/swap count=2K bs=1M
 sudo mkswap /var/swap
@@ -144,7 +166,7 @@ Save the file.
 
 You also need to do this. Edit:
 `sudo nano /etc/dphys-swapfile`
-Add to the file:
+Replace existing `CONF_SWAPSIZE` with:
 `CONF_SWAPSIZE=2048`
 Save the file.
 
@@ -170,10 +192,12 @@ Edit dhcpcd conf:
 Add to the bottom of the file:
 `static domain_name_servers=209.222.18.222 209.222.18.218`
 
-Reboot machine:
+Reboot machine and SSH back in:
 `sudo reboot`
 
-After reboot, you can verify PIA DNS servers are used:
+Sometimes you need to do a hard shutoff with a powercycle, if the reboot fails.
+
+After reboot, you can verify PIA DNS servers are used (it should look similar to this):
 ```
 $ nslookup google.com
 Server:     209.222.18.222
@@ -208,6 +232,20 @@ Verify IPv6 is disabled:
 `cat /proc/sys/net/ipv6/conf/all/disable_ipv6`
 
 Output should be `1`
+
+### Access iCryptoNode and Install Blockchain
+
+You should now be able to access iCryptoNode. Instructions on use are hosted here at iCryptoNode.com.
+
+When you build your own iCryptoNode rather than pre-purchase one, you need to install the blockchain software and sync it.
+
+Go to the Updates tab and download and install the latest version of Monero. Once installed, go to the Node tab and enable the daemon. Syncing will take about a week, [unless you pre-install the blockchain](https://getmonero.org/resources/user-guides/importing_blockchain.html).
+
+### Conclusion
+
+Congratulations! You have successfully built your own iCryptoNode.
+
+If you find a bug, please file a ticket on this Github project. You can also post on the [iCryptoNode subreddit](https://reddit.com/r/iCryptoNode).
 
 ## License
 GPLv3. Essentially if you modify this code, you must release your modifications open source with the same GPLv3 license.

@@ -59,6 +59,6 @@ $(document).ready(function() {
         )
     })
 
-    app.checkUpdate()
+    app.loadNodeInfo()
 
 })

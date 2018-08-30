@@ -13,7 +13,7 @@ print_info () {
 if [ -z "$1" ]; then
     usage
 
-elif [ "$1" == "monero" ]; then
+elif [ "$1" = "monero" ]; then
     print_info "Configuring a monero node"
 
 else
@@ -25,7 +25,7 @@ ROOT_DIR=/var/www/html/icryptonode
 
 print_info "Installing required packages"
 sudo apt-get update
-sudo apt-get install ufw openvpn unzip lighttpd cmake dh-autoreconf git \
+sudo apt-get --assume-yes install ufw openvpn unzip lighttpd cmake dh-autoreconf git \
     lua5.1 liblua5.1-0-dev php7.0-fpm php7.0-cgi php-pear php7.0-dev \
     libgpgme11 libgpgme-dev dnsutils
 
@@ -49,6 +49,10 @@ sudo chown -R www-data:www-data /etc/icryptonode
 print_info "Enabling lighttpd extensions"
 sudo lighty-enable-mod fastcgi 
 sudo lighty-enable-mod fastcgi-php
+
+print_info "Replacing lighttpd config"
+sudo cp ./lighttpd_config /etc/lighttpd/lighttpd.conf 
+
 sudo service lighttpd force-reload
 
 print_info "Moving iCryptoNode web software into place"
@@ -61,8 +65,10 @@ $ROOT_DIR/vpn/commands/change_pia_auth REPLACE_ME nothing
 sudo chown -R www-data:www-data $ROOT_DIR
 
 
-if [ "$1" == "monero" ]; then
+if [ "$1" = "monero" ]; then
     print_info "Opening up monero daemon ports"
+    sudo ufw allow 22
+    sudo ufw allow 80
     sudo ufw allow 18080
     sudo ufw allow 18081
 fi
@@ -82,17 +88,16 @@ print_info "Setting UCI variables"
 sudo mkdir /etc/config
 touch /etc/config/icryptonode
 uci add icryptonode info
-uci set icryptonode.@info[0].version='1'
 uci set icryptonode.@info[0].vpn_enabled='no'
 uci set icryptonode.@info[0].vpn_file='US_East.ovpn'
-uci set icryptonode.@info[0].daemon_version='1'
-uci set icryptonode.@info[0].daemon_enabled='yes'
+uci set icryptonode.@info[0].daemon_version='0'
+uci set icryptonode.@info[0].daemon_enabled='no'
 uci set icryptonode.@info[0].daemon_user='icryptonode'
 uci set icryptonode.@info[0].daemon_pass='salmonsushi'
 
 uci set icryptonode.@info[0].is_updating='no'
 
-if [ "$1" == "monero" ]; then
+if [ "$1" = "monero" ]; then
     uci set icryptonode.@info[0].node_type='monero'
     uci set icryptonode.@info[0].daemon_rpc_port='18081'
 fi
