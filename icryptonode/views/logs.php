@@ -9,4 +9,10 @@
         <span v-if="tabs.logs.isLoading"><i class="fa fa-spinner fa-spin icn-spinner"></i></span>
     </div>
     <pre v-if="!tabs.logs.isLoading" v-html="tabs.logs.logHTML" id="console"></pre>
+    <div>
+        <button v-if="!tabs.logs.isLoading"
+                type="button"
+                v-on:click="loadLogs"
+                class="btn btn-success">Refresh</button>
+    </div>
 </div>
