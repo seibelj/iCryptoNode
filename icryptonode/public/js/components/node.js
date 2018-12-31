@@ -105,7 +105,7 @@ VUE_GLOBALS.node.methods = {
             'daemon_pass': vm.tabs.node.newDaemonPassword,
             'daemon_rpc_port': $.trim(vm.tabs.node.newDaemonPort),
             'daemon_enabled': vm.tabs.node.isNewlyEnabled
-        }, {timeout: 15000}).then(response => {
+        }, {timeout: 30000}).then(response => {
             
             vm.loadNodeInfo()
         

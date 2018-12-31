@@ -14,6 +14,6 @@ df -h | awk '$NF=="/"{printf "\"disk\": { \"current\":%d, \"total\":%d, \"used\"
 echo -n ','
 
 # cpu as "cpu": { "load": 40 } where load is in %
-top -bn1 | grep load | awk '{printf "\"cpu\": { \"load\": %.2f }", $(NF-2)}'
+grep 'cpu ' /proc/stat | awk '{printf "\"cpu\": { \"load\": %.2f }", ($2+$4)*100/($2+$4+$5)}'
 
 echo -n '}'

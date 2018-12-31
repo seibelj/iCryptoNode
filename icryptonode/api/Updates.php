@@ -73,6 +73,9 @@ class Updates
             'icn_download' => false
         );
 
+        // Re-enable crons if disabled because of some weird issue
+        shell_exec( "sudo uci set icryptonode.@info[0].is_updating='no'; sudo uci commit" );
+
         $update_config = $this->get_update_config();
 
         $daemon_download_path = DAEMON_DOWNLOAD_PATH . '/' . basename($update_config[NODE_TYPE]['url']);
@@ -87,6 +90,31 @@ class Updates
         if (file_exists( $icn_download_path )) {
             unlink($icn_download_path);
             $response['icn_download'] = true;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Endpoint for force-allowing updates in case of some sort of corruption
+     *
+     * @url POST force_allow_update
+     * @param string update_type
+     *
+     * @return json
+    */
+    public function force_allow_update($update_type) {
+
+        $response = array(
+            'success' => true
+        );
+
+        // Update UCI
+        if ($update_type == "daemon") {
+            shell_exec( "sudo uci set icryptonode.@info[0].daemon_version='0'; sudo uci commit" );
+        }
+        else {
+            throw new Exception('ERROR: UNKNOWN UPDATE TYPE');
         }
 
         return $response;
@@ -193,9 +221,11 @@ class Updates
     */
     public function install_daemon() {
         $update_config = $this->get_update_config();
+
+        $response = array('success' => false);
         
         if (!$this->validate_daemon_download($update_config)) {
-            return array('success' => false);
+            return $response;
         }
 
         // Block crons
@@ -205,11 +235,10 @@ class Updates
         shell_exec( 'sudo ' . NODE_CMD . ' stop' );
         sleep(6);
 
-        $this->delete_folder( DAEMON_DIR . '/*' );
         $daemon_compressed_path = DAEMON_DOWNLOAD_PATH . '/' . basename($update_config[NODE_TYPE]['url']);
         
         if ($this->endsWith($daemon_compressed_path, '.tar.bz2')) {
-            shell_exec( 'tar -xjf ' . $daemon_compressed_path . ' -C ' . DAEMON_DIR . '/' );
+            shell_exec( "sudo " . SYSTEM_CMD_DIR . "/update_daemon " . escapeshellarg($daemon_compressed_path) );
         }
         else {
             throw new Exception('ERROR: UNKNOWN FILE EXTENSION');
@@ -228,8 +257,8 @@ class Updates
         shell_exec( "sudo uci set icryptonode.@info[0].is_updating='no'; sudo uci commit" );
 
         // If the daemon was enabled, will start within 60 seconds automatically via cron
-
-        return array('success' => true);
+        $response['success'] = true;
+        return $response;
     }
 
     /**
@@ -286,15 +315,11 @@ class Updates
 
         $update_config = $this->get_update_config();
 
-        $update_available = false;
-        if ($update_config["iCryptoNode"]['version'] > ICRYPTONODE_VERSION) {
-            $update_available = true;
-            $this->download_file($update_config["iCryptoNode"]['url']);
-        }
+        $this->download_file($update_config["iCryptoNode"]['url']);
         // Hack for local-server testing
         // https://stackoverflow.com/a/30311555
         // header("Content-length: 27");
-        return array('downloading' => $update_available);
+        return array('downloading' => true);
     }
 
     // Instantly return
@@ -361,10 +386,6 @@ class Updates
         }
 
         return json_decode($plain, true);
-    }
-
-    private function delete_folder($path) {
-        shell_exec('rm -rf ' . escapeshellarg($path) );
     }
 
     private function endsWith( $str, $sub ) {

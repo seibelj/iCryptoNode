@@ -194,7 +194,7 @@ VUE_GLOBALS.update.methods = {
         let vm = this
         this.tabs.update.isInstallingDaemon = true
 
-        axios.post( API_ROOT + '/updates/install_daemon', {}).then(response => {
+        axios.post( API_ROOT + '/updates/install_daemon', {}, {timeout: 60000}).then(response => {
 
             if (response.data.success) {
                 vm.checkUpdate()
@@ -234,6 +234,11 @@ VUE_GLOBALS.update.methods = {
                 return axios.get( API_ROOT + '/updates/download_icn').then(response => {
 
                     return new Promise((resolve, reject) => {
+
+                        if (!response.data.downloading) {
+                            return reject("Could not download.");
+                        }
+
                         let isChecking = false
                         let errorCount = 0
                         let i = setInterval(function() {
@@ -338,5 +343,22 @@ VUE_GLOBALS.update.methods = {
         }).catch(error => {
             console.error("Unable to clear downloaded files", error)
         })
+    },
+    allowDaemonUpdate: function() {
+        let vm = this
+
+        axios.post( API_ROOT + '/updates/force_allow_update', {update_type: "daemon"}).then(response => {
+
+            console.log(response)
+            vm.checkUpdate()
+
+        }).catch(error => {
+            console.error("Unable to force-allow daemon update", error)
+        })
+    },
+    allowIcnUpdate: function() {
+        let vm = this
+
+        vm.tabs.update.isIcnUpdateAvailable = true;
     }
 }

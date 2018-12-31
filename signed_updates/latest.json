@@ -1,0 +1,17 @@
+{
+    "iCryptoNode": {
+        "version": 2,
+        "version_short": "1.1.0",
+        "url": "https://github.com/seibelj/iCryptoNode/releases/download/v1.1.0/icn-v1.1.0.tar.gz",
+        "sha256": "c0543519723e0b61025be53689fb4ca1a47f86dd4e767acff47f062a3a4cfa85",
+        "size": 3352750
+    },
+    "monero": {
+        "daemon_version": 3,
+        "daemon_version_short": "0.13.0.4",
+        "daemon_version_long": "Monero 'Beryllium Bullet' (v0.13.0.4-release)",
+        "url": "https://dlsrc.getmonero.org/cli/monero-linux-armv7-v0.13.0.4.tar.bz2",
+        "sha256": "65e2ce5d0abf80ed3b4ecef5babc37445dc4f032457811aafa8a221af78f554a",
+        "size": 41004165
+    }
+}

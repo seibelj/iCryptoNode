@@ -42,6 +42,9 @@ class Node
     */
     public function update_settings($daemon_user, $daemon_rpc_port, $daemon_enabled, $daemon_pass = '') {
 
+        // Block crons
+        shell_exec( "sudo uci set icryptonode.@info[0].is_updating='yes'; sudo uci commit" );
+
         $this->execute_node_cmd('stop');
 
         sleep(6);
@@ -62,6 +65,9 @@ class Node
         }
 
         $output = shell_exec( "sudo uci commit" );
+
+        // Re-enable crons
+        shell_exec( "sudo uci set icryptonode.@info[0].is_updating='no'; sudo uci commit" );
 
         if ($daemon_enabled) {
             $this->execute_node_cmd('start');

@@ -2,6 +2,4 @@
 
 export LD_LIBRARY_PATH=/usr/local/lib
 
-sudo uci set icryptonode.@info[0].poop='pee'
-sudo uci commit
-
+# Fill in with update steps, if any
