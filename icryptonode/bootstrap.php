@@ -1,6 +1,6 @@
 <?php
 
-define('ICRYPTONODE_VERSION', 1);
+define('ICRYPTONODE_VERSION', 2);
 
 define('DEBUG_ENABLED', true);
 define('APP_ROOT', __DIR__);
