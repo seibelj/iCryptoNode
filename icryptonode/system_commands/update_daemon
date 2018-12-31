@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Cleans out old folder, extracts the new daemon, ensures perms are correct
+sudo rm -rf /etc/icryptonode/daemon/*
+
+# Pass in path to compressed daemon
+tar -xjf $1 -C /etc/icryptonode/daemon/
+
+sudo chown -R www-data:www-data /etc/icryptonode/daemon/*

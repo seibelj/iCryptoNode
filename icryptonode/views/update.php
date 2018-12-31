@@ -82,7 +82,24 @@
             </div>
         </div>
 
-        <div>
+        <div class="marg-40">
+            <h3>Force-Allow Updates</h3>
+            <div>
+                If you want to force iCryptoNode to allow an update, use this.
+                It can be useful if the installation becomes corrupted, allowing a fresh install.
+            </div>
+
+            <button :disabled="!allowClearFiles"
+                type="button"
+                v-on:click="allowDaemonUpdate"
+                class="btn btn-primary">Force-Allow Daemon Update</button>
+            <button :disabled="!allowClearFiles"
+                type="button"
+                v-on:click="allowIcnUpdate"
+                class="btn btn-primary">Force-Allow iCryptoNode Update</button>
+        </div>
+
+        <div class="marg-40">
             <h3>Clear Updates</h3>
             <div>
                 If you get into an error state that cannot be recovered, use this to clear out
