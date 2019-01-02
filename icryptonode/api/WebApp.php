@@ -28,7 +28,7 @@ class WebApp
      * @return json
     */
     public function logs() {
-        $output = shell_exec( NODE_CMD . ' logs' );
+        $output = shell_exec( 'sudo ' . NODE_CMD . ' logs' );
         return array('log' => $output);
     }
 }

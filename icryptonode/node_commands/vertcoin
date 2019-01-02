@@ -1,0 +1,77 @@
+#!/bin/sh
+
+DAEMON_FILE=/etc/icryptonode/daemon/vertcoind
+BLOCKCHAIN_DIR=/etc/icryptonode/blockchain
+
+LOG_FILE=$BLOCKCHAIN_DIR/debug.log
+LOG_ROWS="200"
+
+DAEMON_ENABLED="$(uci get icryptonode.@info[0].daemon_enabled)"
+
+DAEMON_USER="$(uci get icryptonode.@info[0].daemon_user)"
+DAEMON_PASS="$(uci get icryptonode.@info[0].daemon_pass)"
+DAEMON_RPC_PORT="$(uci get icryptonode.@info[0].daemon_rpc_port)"
+
+CMD="$1"
+
+vertcoin_stop () {
+    if [ -f $BLOCKCHAIN_DIR/vertcoind.pid ]; then
+        PIDOF=$(cat $BLOCKCHAIN_DIR/vertcoind.pid)
+        echo "Stopping vertcoin (PID = $PIDOF)"
+        kill $PIDOF
+    fi
+}
+
+vertcoin_start () {
+
+    if [ "$DAEMON_ENABLED" = "no" ]; then
+        echo "DAEMON_ENABLED = no, not starting vertcoin"
+        exit 1
+    fi
+    echo "Starting vertcoin"    
+    $DAEMON_FILE -debug=1 -daemon -rpcbind=0.0.0.0 -rpcport=$DAEMON_RPC_PORT -server -onlynet=ipv4 -rpcuser=$DAEMON_USER -rpcpassword=$DAEMON_PASS -listenonion=0 -rpcallowip=::/0 -datadir=$BLOCKCHAIN_DIR -shrinkdebugfile
+}
+
+vertcoin_restart () {
+    vertcoin_stop
+    sleep 10
+    vertcoin_start
+}
+
+if [ "$CMD" = "logs" ]; then
+
+    tail -n"$LOG_ROWS" "$LOG_FILE"
+
+elif [ "$CMD" = "status" ]; then
+
+    if [ -f $BLOCKCHAIN_DIR/vertcoind.pid ]; then
+        PIDOF=$(cat $BLOCKCHAIN_DIR/vertcoind.pid)
+        echo "vertcoin running (PIDOF = $PIDOF)"
+        exit 5
+    else
+        exit 4
+    fi
+
+elif [ "$CMD" = "stop" ]; then
+
+    vertcoin_stop
+    exit 0
+
+elif [ "$CMD" = "start" ]; then
+
+    vertcoin_start
+    exit 0
+
+elif [ "$CMD" = "restart" ]; then
+
+    vertcoin_restart
+    exit 0
+
+elif [ "$CMD" = "version" ]; then
+
+    $DAEMON_FILE --version | head -n 1
+
+else
+    exit 9
+fi
+

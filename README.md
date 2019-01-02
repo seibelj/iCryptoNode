@@ -1,8 +1,8 @@
-# iCryptoNode - Monero Raspberry Pi Cryptocurrency Node Management Software
+# iCryptoNode - Raspberry Pi Cryptocurrency Node Management Software
 
 [iCryptoNode](https://icryptonode.com/) is an open source software project to manage blockchain daemons, specifically for single-board computers like Raspberry Pi. It aims to be blockchain agnostic by standardizing interfaces.
 
-For now, we are only supporting [Monero](https://getmonero.org/).
+For now, we only support [Monero](https://getmonero.org/) and [Vertcoin](https://vertcoin.org/).
 
 Anyone can use or build this software. Development is sponsored by [iCryptoNode.com](https://icryptonode.com/) which sells hardware pre-installed and configured with iCryptoNode and blockchain software.
 
@@ -10,6 +10,7 @@ Anyone can use or build this software. Development is sponsored by [iCryptoNode.
 
  - Blockchains:
    - Monero
+   - Vertcoin
    - *More coming soon*
  - Privacy & Security
    - Built-in support for VPN ([Private Internet Access](https://www.privateinternetaccess.com/pages/buy-vpn/easyvpnr))
@@ -101,7 +102,7 @@ In your home folder on the raspberry pi:
 This automatically configures as many things as possible. Unfortunately some things can't (easily) be automated, which is why there are more manual steps after this.
 
 `cd iCryptoNode/setup`
-`sudo ./icn_configure monero`
+`sudo ./icn_configure [monero|vertcoin]`
 
 Let it run.
 
@@ -235,11 +236,11 @@ Output should be `1`
 
 ### Access iCryptoNode and Install Blockchain
 
-You should now be able to access iCryptoNode. Instructions on use are hosted here at iCryptoNode.com.
+You should now be able to access iCryptoNode. Instructions on use are in the `setup/` folder (PDF).
 
 When you build your own iCryptoNode rather than pre-purchase one, you need to install the blockchain software and sync it.
 
-Go to the Updates tab and download and install the latest version of Monero. Once installed, go to the Node tab and enable the daemon. Syncing will take about a week, [unless you pre-install the blockchain](https://getmonero.org/resources/user-guides/importing_blockchain.html).
+Go to the Updates tab and download and install the latest version of the blockchain software. Once installed, go to the Node tab and enable the daemon. Syncing will take about a week, [unless you pre-install the blockchain](https://getmonero.org/resources/user-guides/importing_blockchain.html).
 
 ### Conclusion
 
