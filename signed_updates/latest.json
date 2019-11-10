@@ -7,11 +7,11 @@
         "size": 3352750
     },
     "monero": {
-        "daemon_version": 4,
-        "daemon_version_short": "0.14.0.2",
-        "daemon_version_long": "Monero 'Boron Butterfly' (v0.14.0.2-release)",
-        "url": "https://downloads.getmonero.org/cli/monero-linux-armv7-v0.14.0.2.tar.bz2",
-        "sha256": "f0e3d82354a9a25776bd2081f2bb1c081a8589ffb783e765ec974d211174236a",
-        "size": 41306655
+        "daemon_version": 6,
+        "daemon_version_short": "0.15.0.0",
+        "daemon_version_long": "Monero 'Carbon Chamaeleon' Point Release (v0.15.0.0-release)",
+        "url": "https://dlsrc.getmonero.org/cli/monero-linux-armv7-v0.15.0.0.tar.bz2",
+        "sha256": "326f783ffde78694b2820c95aa310ead00bb5876937ed4edf9c1abd6b6aadc02",
+        "size": 66871018
     }
 }
