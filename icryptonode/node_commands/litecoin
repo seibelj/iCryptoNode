@@ -1,0 +1,78 @@
+#!/bin/sh
+
+DAEMON_FILE=/etc/icryptonode/daemon/litecoin/bin/litecoind
+BLOCKCHAIN_DIR=/etc/icryptonode/blockchain
+
+LOG_FILE=/etc/icryptonode/blockchain/debug.log
+LOG_ROWS="200"
+
+DAEMON_ENABLED="$(uci get icryptonode.@info[0].daemon_enabled)"
+
+DAEMON_USER="$(uci get icryptonode.@info[0].daemon_user)"
+DAEMON_PASS="$(uci get icryptonode.@info[0].daemon_pass)"
+DAEMON_RPC_PORT="$(uci get icryptonode.@info[0].daemon_rpc_port)"
+
+CMD="$1"
+
+litecoin_stop () {
+    PIDOF=$(ps aux | egrep monerod.--detach | egrep  -v grep | awk '{print $2}')
+    if [ -n "$PIDOF" ]; then
+        echo "Stopping monero (PID = $PIDOF)"
+        $DAEMON_FILE --log-file $LOG_FILE --data-dir $BLOCKCHAIN_DIR --rpc-bind-ip 0.0.0.0 --rpc-login $DAEMON_USER:$DAEMON_PASS --rpc-bind-port $DAEMON_RPC_PORT --confirm-external-bind exit
+    fi
+}
+
+litecoin_start () {
+
+    if [ "$DAEMON_ENABLED" = "no" ]; then
+        echo "DAEMON_ENABLED = no, not starting litecoin"
+        exit 1
+    fi
+    echo "Starting monero"
+    $DAEMON_FILE -daemon -debuglogfile=$LOG_FILE -datadir=$BLOCKCHAIN_DIR -debug=1 -shrinkdebugfile -rpcallowip=0.0.0.0/0 -rpcbind=0.0.0.0 -rpcuser=$DAEMON_USER -rpcpassword=$DAEMON_PASS -rpcport=$DAEMON_RPC_PORT -server
+}
+
+litecoin_restart () {
+    litecoin_stop
+    sleep 6
+    litecoin_start
+}
+
+if [ "$CMD" = "logs" ]; then
+    
+    tail -n"$LOG_ROWS" "$LOG_FILE"
+
+elif [ "$CMD" = "status" ]; then
+
+    PIDOF=$(ps aux | egrep monerod.--detach | egrep  -v grep | awk '{print $2}')
+    
+    if [ -n "$PIDOF" ]; then
+        echo "Litecoin running (PIDOF = $PIDOF)"
+        exit 5
+    else
+        exit 4
+    fi
+
+elif [ "$CMD" = "stop" ]; then
+    
+    litecoin_stop
+    exit 0
+
+elif [ "$CMD" = "start" ]; then
+    
+    litecoin_start
+    exit 0
+
+elif [ "$CMD" = "restart" ]; then
+    
+    litecoin_restart
+    exit 0
+
+elif [ "$CMD" = "version" ]; then
+    
+    $DAEMON_FILE -version
+
+else
+    exit 9
+fi
+

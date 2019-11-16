@@ -2,7 +2,7 @@
 
 usage () {
     echo "\niCryptoNode Configuration Program"
-    echo "Usage: icn_configure [monero]\n"
+    echo "Usage: icn_configure [monero|litecoin]\n"
     exit 0
 }
 
@@ -15,6 +15,9 @@ if [ -z "$1" ]; then
 
 elif [ "$1" = "monero" ]; then
     print_info "Configuring a monero node"
+
+elif [ "$1" = "litecoin" ]; then
+    print_info "Configuring a litecoin node"
 
 else
     print_info "Error: unknown node type '$1'"
@@ -64,14 +67,21 @@ $ROOT_DIR/vpn/commands/change_pia_auth REPLACE_ME nothing
 
 sudo chown -R www-data:www-data $ROOT_DIR
 
-
 if [ "$1" = "monero" ]; then
     print_info "Opening up monero daemon ports"
     sudo ufw allow 22
     sudo ufw allow 80
     sudo ufw allow 18080
     sudo ufw allow 18081
+
+elif [ "$1" = "litecoin" ]; then
+    print_info "Opening up litecoin daemon ports"
+    sudo ufw allow 22
+    sudo ufw allow 80
+    sudo ufw allow 9332
+    sudo ufw allow 9333
 fi
+sudo ufw enable
 
 # Set crons and enable them
 print_info "Creating crontab entries"
@@ -100,10 +110,13 @@ uci set icryptonode.@info[0].is_updating='no'
 if [ "$1" = "monero" ]; then
     uci set icryptonode.@info[0].node_type='monero'
     uci set icryptonode.@info[0].daemon_rpc_port='18081'
+
+elif [ "$1" = "litecoin" ]; then
+    uci set icryptonode.@info[0].node_type='litecoin'
+    uci set icryptonode.@info[0].daemon_rpc_port='9332'
 fi
 
 sudo uci commit
 sudo chown -R www-data:www-data /etc/config
-
 
 echo "iCryptoNode configuration success!"
