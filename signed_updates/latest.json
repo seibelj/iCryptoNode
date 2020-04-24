@@ -7,11 +7,11 @@
         "size": 3352750
     },
     "monero": {
-        "daemon_version": 6,
-        "daemon_version_short": "0.15.0.0",
-        "daemon_version_long": "Monero 'Carbon Chamaeleon' Point Release (v0.15.0.0-release)",
-        "url": "https://dlsrc.getmonero.org/cli/monero-linux-armv7-v0.15.0.0.tar.bz2",
-        "sha256": "326f783ffde78694b2820c95aa310ead00bb5876937ed4edf9c1abd6b6aadc02",
-        "size": 66871018
+        "daemon_version": 7,
+        "daemon_version_short": "0.15.0.5",
+        "daemon_version_long": "Monero 'Carbon Chamaeleon' Point Release (v0.15.0.5-release)",
+        "url": "https://dlsrc.getmonero.org/cli/monero-linux-armv7-v0.15.0.5.tar.bz2",
+        "sha256": "a23402ccf5ac432306fe263fae660646206ecb9d2aec3cfacb25afce34794067",
+        "size": 66961001
     }
 }
