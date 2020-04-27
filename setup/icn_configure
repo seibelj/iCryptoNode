@@ -44,6 +44,13 @@ print_info "Creating icryptonode daemon dirs"
 sudo mkdir /etc/icryptonode
 sudo mkdir /etc/icryptonode/daemon
 sudo mkdir /etc/icryptonode/blockchain
+
+if [ "$1" = "bitcoin" ]; then
+    print_info "Creating blockchain folder in external disk"
+    sudo mkdir /mnt/bitcoin/blockchain
+    sudo chown -R www-data:www-data /mnt/bitcoin
+fi
+
 sudo cp ./fix_folders.sh /etc/icryptonode
 
 print_info "Importing iCryptoNode official PGP public key"
@@ -109,7 +116,7 @@ rm mycron
 print_info "Setting UCI variables"
 
 sudo mkdir /etc/config
-touch /etc/config/icryptonode
+sudo touch /etc/config/icryptonode
 uci add icryptonode info
 uci set icryptonode.@info[0].vpn_enabled='no'
 uci set icryptonode.@info[0].vpn_file='US_East.ovpn'

@@ -1,0 +1,79 @@
+#!/bin/sh
+
+DAEMON_FILE=/etc/icryptonode/daemon/bitcoin/bin/bitcoind
+DAEMON_CLI_FILE=/etc/icryptonode/daemon/bitcoin/bin/bitcoin-cli
+BLOCKCHAIN_DIR=/mnt/bitcoin/blockchain
+
+LOG_FILE=/mnt/bitcoin/blockchain/debug.log
+LOG_ROWS="200"
+
+DAEMON_ENABLED="$(uci get icryptonode.@info[0].daemon_enabled)"
+
+DAEMON_USER="$(uci get icryptonode.@info[0].daemon_user)"
+DAEMON_PASS="$(uci get icryptonode.@info[0].daemon_pass)"
+DAEMON_RPC_PORT="$(uci get icryptonode.@info[0].daemon_rpc_port)"
+
+CMD="$1"
+
+bitcoin_stop () {
+    PIDOF=$(ps aux | egrep bitcoind.-daemon | egrep  -v grep | awk '{print $2}')
+    if [ -n "$PIDOF" ]; then
+        echo "Stopping bitcoin (PID = $PIDOF)"
+        $DAEMON_CLI_FILE -rpcuser=$DAEMON_USER -rpcpassword=$DAEMON_PASS -rpcport=$DAEMON_RPC_PORT stop
+    fi
+}
+
+bitcoin_start () {
+
+    if [ "$DAEMON_ENABLED" = "no" ]; then
+        echo "DAEMON_ENABLED = no, not starting bitcoin"
+        exit 1
+    fi
+    echo "Starting bitcoin"
+    $DAEMON_FILE -daemon -debuglogfile=$LOG_FILE -datadir=$BLOCKCHAIN_DIR -dbcache=128 -maxmempool=128 -mempoolexpiry=24 -disablewallet -noonion -debug=1 -shrinkdebugfile -rest -rpcallowip=0.0.0.0/0 -rpcbind=0.0.0.0 -rpcuser=$DAEMON_USER -rpcpassword=$DAEMON_PASS -rpcport=$DAEMON_RPC_PORT -server
+}
+
+bitcoin_restart () {
+    bitcoin_stop
+    sleep 6
+    bitcoin_start
+}
+
+if [ "$CMD" = "logs" ]; then
+    
+    tail -n"$LOG_ROWS" "$LOG_FILE"
+
+elif [ "$CMD" = "status" ]; then
+
+    PIDOF=$(ps aux | egrep bitcoind.-daemon | egrep  -v grep | awk '{print $2}')
+    
+    if [ -n "$PIDOF" ]; then
+        echo "Bitcoin running (PIDOF = $PIDOF)"
+        exit 5
+    else
+        exit 4
+    fi
+
+elif [ "$CMD" = "stop" ]; then
+    
+    bitcoin_stop
+    exit 0
+
+elif [ "$CMD" = "start" ]; then
+    
+    bitcoin_start
+    exit 0
+
+elif [ "$CMD" = "restart" ]; then
+    
+    bitcoin_restart
+    exit 0
+
+elif [ "$CMD" = "version" ]; then
+    
+    $DAEMON_FILE -version
+
+else
+    exit 9
+fi
+

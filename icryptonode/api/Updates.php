@@ -237,7 +237,7 @@ class Updates
 
         $daemon_compressed_path = DAEMON_DOWNLOAD_PATH . '/' . basename($update_config[NODE_TYPE]['url']);
         
-        if ($this->endsWith($daemon_compressed_path, '.tar.bz2')) {
+        if ($this->endsWith($daemon_compressed_path, '.tar.bz2') || $this->endsWith($daemon_compressed_path, '.tar.gz')) {
             shell_exec( "sudo " . SYSTEM_CMD_DIR . "/update_daemon " . escapeshellarg($daemon_compressed_path) );
         }
         else {
