@@ -91,7 +91,7 @@ class Node
             return array('success' => false);
         }
 
-        $output = shell_exec( NODE_CMD . ' ' . $operation );
+        $output = shell_exec( 'sudo ' . NODE_CMD . ' ' . $operation );
         $vpn_status = json_decode($output);
         return $vpn_status;
     }

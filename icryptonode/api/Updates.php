@@ -377,7 +377,12 @@ class Updates
     private function get_update_config() {
         putenv('GNUPGHOME=' . GNUPG_HOME);
         $res = gnupg_init();
-        $signed = file_get_contents( UPDATE_ENDPOINT . '/latest.json.asc' );
+        if (TESTMODE_ENABLED) {
+            $signed = file_get_contents( UPDATE_ENDPOINT . '/testing.json.asc' );
+        }
+        else {
+            $signed = file_get_contents( UPDATE_ENDPOINT . '/latest.json.asc' );
+        }
         $plain = "";
         $info = gnupg_verify($res, $signed, false, $plain);
 
