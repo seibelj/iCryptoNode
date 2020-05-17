@@ -23,6 +23,13 @@ fi
 
 NODE_TYPE="$(sudo uci get icryptonode.@info[0].node_type)"
 
+if [ "$NODE_TYPE" = "bitcoin" ]; then
+    if [ ! -d "/mnt/bitcoin/blockchain" ]; then
+        echo "daemon_cron: external drive not mounted, mounting"
+        sudo mount /dev/sda1 /mnt/bitcoin
+    fi
+fi
+
 DAEMON_FILE="/var/www/html/icryptonode/node_commands/$NODE_TYPE"
 
 $DAEMON_FILE status

@@ -1,6 +1,6 @@
 <?php
 
-define('ICRYPTONODE_VERSION', 2);
+define('ICRYPTONODE_VERSION', 3);
 
 define('DEBUG_ENABLED', true);
 define('APP_ROOT', __DIR__);
@@ -14,6 +14,7 @@ define('NODE_TYPE', trim(preg_replace('/\s\s+/', '', shell_exec( 'sudo uci get i
 define('NODE_CMD', APP_ROOT . '/node_commands/' . NODE_TYPE);
 
 define('UPDATE_ENDPOINT', 'https://updates.icryptonode.com');
+define('TESTMODE_ENABLED', false);
 
 define('DAEMON_DIR', '/etc/icryptonode/daemon');
 define('FIX_DAEMON_DIR_SCRIPT', '/etc/icryptonode/fix_folders.sh');
