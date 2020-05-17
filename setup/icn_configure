@@ -135,7 +135,7 @@ elif [ "$1" = "litecoin" ]; then
     uci set icryptonode.@info[0].node_type='litecoin'
     uci set icryptonode.@info[0].daemon_rpc_port='9332'
 
-elif [ "$1" = "litecoin" ]; then
+elif [ "$1" = "bitcoin" ]; then
     uci set icryptonode.@info[0].node_type='bitcoin'
     uci set icryptonode.@info[0].daemon_rpc_port='8332'
 fi
