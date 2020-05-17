@@ -237,7 +237,7 @@ class Updates
 
         $daemon_compressed_path = DAEMON_DOWNLOAD_PATH . '/' . basename($update_config[NODE_TYPE]['url']);
         
-        if ($this->endsWith($daemon_compressed_path, '.tar.bz2')) {
+        if ($this->endsWith($daemon_compressed_path, '.tar.bz2') || $this->endsWith($daemon_compressed_path, '.tar.gz')) {
             shell_exec( "sudo " . SYSTEM_CMD_DIR . "/update_daemon " . escapeshellarg($daemon_compressed_path) );
         }
         else {
@@ -377,7 +377,12 @@ class Updates
     private function get_update_config() {
         putenv('GNUPGHOME=' . GNUPG_HOME);
         $res = gnupg_init();
-        $signed = file_get_contents( UPDATE_ENDPOINT . '/latest.json.asc' );
+        if (TESTMODE_ENABLED) {
+            $signed = file_get_contents( UPDATE_ENDPOINT . '/testing.json.asc' );
+        }
+        else {
+            $signed = file_get_contents( UPDATE_ENDPOINT . '/latest.json.asc' );
+        }
         $plain = "";
         $info = gnupg_verify($res, $signed, false, $plain);
 

@@ -1,14 +1,15 @@
-# iCryptoNode - Monero Raspberry Pi Cryptocurrency Node Management Software
+# iCryptoNode - Bitcoin and Monero Raspberry Pi Cryptocurrency Node Management Software
 
 [iCryptoNode](https://icryptonode.com/) is an open source software project to manage blockchain daemons, specifically for single-board computers like Raspberry Pi. It aims to be blockchain agnostic by standardizing interfaces.
 
-For now, we are only supporting [Monero](https://getmonero.org/).
+For now, we are only supporting [Bitcoin](https://bitcoin.org/) and [Monero](https://getmonero.org/).
 
 Anyone can use or build this software. Development is sponsored by [iCryptoNode.com](https://icryptonode.com/) which sells hardware pre-installed and configured with iCryptoNode and blockchain software.
 
 ## Features
 
  - Blockchains:
+   - Bitcoin
    - Monero
    - *More coming soon*
  - Privacy & Security
@@ -91,6 +92,10 @@ To:
 
 Then `cmake .`, `make`, `sudo make install`.
 
+### External Hard Drive
+
+If you are trying to use a cryptocurrency with a large blockchain, (Bitcoin) and need an external hard drive, you must set it up at `/mnt/[coin name]` such as `/mnt/bitcoin`. You can follow instructions [here](https://www.raspberrypi.org/documentation/configuration/external-storage.md).
+
 ### Clone this repository
 
 In your home folder on the raspberry pi:
@@ -101,7 +106,7 @@ In your home folder on the raspberry pi:
 This automatically configures as many things as possible. Unfortunately some things can't (easily) be automated, which is why there are more manual steps after this.
 
 `cd iCryptoNode/setup`
-`sudo ./icn_configure monero`
+`sudo ./icn_configure [bitcoin|monero]`
 
 Let it run.
 
@@ -110,13 +115,13 @@ Let it run.
 We use GPG for our PGP encryption implementation. It must be enabled in `php.ini`.
 
 Edit `php.ini`:
-`sudo nano /etc/php/7.0/cgi/php.ini`
+`sudo nano /etc/php/7.3/cgi/php.ini`
 
 Navigate to the `Dynamic Extensions` section and add this line:
 `extension=gnupg.so`
 
 Do the same for the PHP command-line interface if you'd like:
-`sudo nano /etc/php/7.0/cli/php.ini`
+`sudo nano /etc/php/7.3/cli/php.ini`
 
 Make sure there are no semi-colons (`;`) before it! That comments out the line.
 
@@ -239,7 +244,7 @@ You should now be able to access iCryptoNode. Instructions on use are hosted her
 
 When you build your own iCryptoNode rather than pre-purchase one, you need to install the blockchain software and sync it.
 
-Go to the Updates tab and download and install the latest version of Monero. Once installed, go to the Node tab and enable the daemon. Syncing will take about a week, [unless you pre-install the blockchain](https://getmonero.org/resources/user-guides/importing_blockchain.html).
+Go to the Updates tab and download and install the latest version of the blockchain software. Once installed, go to the Node tab and enable the daemon. Syncing will take about a week unless you pre-install the blockchain.
 
 ### Conclusion
 

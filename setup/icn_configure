@@ -2,7 +2,7 @@
 
 usage () {
     echo "\niCryptoNode Configuration Program"
-    echo "Usage: icn_configure [monero]\n"
+    echo "Usage: icn_configure [monero|bitcoin|litecoin]\n"
     exit 0
 }
 
@@ -16,6 +16,13 @@ if [ -z "$1" ]; then
 elif [ "$1" = "monero" ]; then
     print_info "Configuring a monero node"
 
+elif [ "$1" = "litecoin" ]; then
+    print_info "Configuring a litecoin node [ NOT SUPPORTED - WORK IN PROGRESS ]"
+    exit 1
+
+elif [ "$1" = "bitcoin" ]; then
+    print_info "Configuring a bitcoin node"
+
 else
     print_info "Error: unknown node type '$1'"
     usage
@@ -26,7 +33,7 @@ ROOT_DIR=/var/www/html/icryptonode
 print_info "Installing required packages"
 sudo apt-get update
 sudo apt-get --assume-yes install ufw openvpn unzip lighttpd cmake dh-autoreconf git \
-    lua5.1 liblua5.1-0-dev php7.0-fpm php7.0-cgi php-pear php7.0-dev \
+    lua5.1 liblua5.1-0-dev php7.3-fpm php7.3-cgi php-pear php7.3-dev \
     libgpgme11 libgpgme-dev dnsutils
 
 
@@ -37,6 +44,13 @@ print_info "Creating icryptonode daemon dirs"
 sudo mkdir /etc/icryptonode
 sudo mkdir /etc/icryptonode/daemon
 sudo mkdir /etc/icryptonode/blockchain
+
+if [ "$1" = "bitcoin" ]; then
+    print_info "Creating blockchain folder in external disk"
+    sudo mkdir /mnt/bitcoin/blockchain
+    sudo chown -R www-data:www-data /mnt/bitcoin
+fi
+
 sudo cp ./fix_folders.sh /etc/icryptonode
 
 print_info "Importing iCryptoNode official PGP public key"
@@ -52,6 +66,7 @@ sudo lighty-enable-mod fastcgi-php
 
 print_info "Replacing lighttpd config"
 sudo cp ./lighttpd_config /etc/lighttpd/lighttpd.conf 
+sudo ln -s /usr/share/lighttpd/create-mime.conf.pl /usr/share/lighttpd/create-mime.assign.pl
 
 sudo service lighttpd force-reload
 
@@ -64,14 +79,29 @@ $ROOT_DIR/vpn/commands/change_pia_auth REPLACE_ME nothing
 
 sudo chown -R www-data:www-data $ROOT_DIR
 
-
 if [ "$1" = "monero" ]; then
     print_info "Opening up monero daemon ports"
     sudo ufw allow 22
     sudo ufw allow 80
     sudo ufw allow 18080
     sudo ufw allow 18081
+
+elif [ "$1" = "litecoin" ]; then
+    print_info "Opening up litecoin daemon ports"
+    sudo ufw allow 22
+    sudo ufw allow 80
+    sudo ufw allow 9332
+    sudo ufw allow 9333
+
+elif [ "$1" = "bitcoin" ]; then
+    print_info "Opening up bitcoin daemon ports"
+    sudo ufw allow 22
+    sudo ufw allow 80
+    sudo ufw allow 8332
+    sudo ufw allow 8333
 fi
+
+sudo ufw enable
 
 # Set crons and enable them
 print_info "Creating crontab entries"
@@ -86,7 +116,7 @@ rm mycron
 print_info "Setting UCI variables"
 
 sudo mkdir /etc/config
-touch /etc/config/icryptonode
+sudo touch /etc/config/icryptonode
 uci add icryptonode info
 uci set icryptonode.@info[0].vpn_enabled='no'
 uci set icryptonode.@info[0].vpn_file='US_East.ovpn'
@@ -100,10 +130,17 @@ uci set icryptonode.@info[0].is_updating='no'
 if [ "$1" = "monero" ]; then
     uci set icryptonode.@info[0].node_type='monero'
     uci set icryptonode.@info[0].daemon_rpc_port='18081'
+
+elif [ "$1" = "litecoin" ]; then
+    uci set icryptonode.@info[0].node_type='litecoin'
+    uci set icryptonode.@info[0].daemon_rpc_port='9332'
+
+elif [ "$1" = "bitcoin" ]; then
+    uci set icryptonode.@info[0].node_type='bitcoin'
+    uci set icryptonode.@info[0].daemon_rpc_port='8332'
 fi
 
 sudo uci commit
 sudo chown -R www-data:www-data /etc/config
-
 
 echo "iCryptoNode configuration success!"

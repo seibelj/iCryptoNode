@@ -1,9 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
 # Cleans out old folder, extracts the new daemon, ensures perms are correct
 sudo rm -rf /etc/icryptonode/daemon/*
 
 # Pass in path to compressed daemon
-tar -xjf $1 -C /etc/icryptonode/daemon/
+if [[ $1 = *.tar.bz2 ]]; then
+    tar -xjf $1 -C /etc/icryptonode/daemon/
+
+elif [[ $1 = *.tar.gz ]]; then
+    tar -xzf $1 -C /etc/icryptonode/daemon/
+
+fi
 
 sudo chown -R www-data:www-data /etc/icryptonode/daemon/*
