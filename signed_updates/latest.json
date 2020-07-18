@@ -1,17 +1,25 @@
 {
     "iCryptoNode": {
-        "version": 2,
-        "version_short": "1.1.0",
-        "url": "https://github.com/seibelj/iCryptoNode/releases/download/v1.1.0/icn-v1.1.0.tar.gz",
-        "sha256": "c0543519723e0b61025be53689fb4ca1a47f86dd4e767acff47f062a3a4cfa85",
-        "size": 3352750
+        "version": 3,
+        "version_short": "1.2.0",
+        "url": "https://github.com/seibelj/iCryptoNode/releases/download/v1.2.0/icn-v1.2.0.tar.gz",
+        "sha256": "844937bbc3cc52d39c0b841bfb7a95d2173f55bb812cdd84da79e976741fc134",
+        "size": 3452990
     },
     "monero": {
-        "daemon_version": 7,
-        "daemon_version_short": "0.15.0.5",
-        "daemon_version_long": "Monero 'Carbon Chamaeleon' Point Release (v0.15.0.5-release)",
-        "url": "https://dlsrc.getmonero.org/cli/monero-linux-armv7-v0.15.0.5.tar.bz2",
-        "sha256": "a23402ccf5ac432306fe263fae660646206ecb9d2aec3cfacb25afce34794067",
-        "size": 66961001
+        "daemon_version": 8,
+        "daemon_version_short": "0.16.0.0",
+        "daemon_version_long": "Monero 'Nitrogen Nebula' Release (v0.16.0.0)",
+        "url": "https://dlsrc.getmonero.org/cli/monero-linux-armv7-v0.16.0.0.tar.bz2",
+        "sha256": "8aad622b0e562b610b69bc0ed0fab98bc7bfc77352151b9259ef5c8cab9338d0",
+        "size": 67304021
+    },
+    "bitcoin": {
+        "daemon_version": 1,
+        "daemon_version_short": "0.19.1",
+        "daemon_version_long": "Bitcoin Core 0.19.1",
+        "url": "https://bitcoin.org/bin/bitcoin-core-0.19.1/bitcoin-0.19.1-arm-linux-gnueabihf.tar.gz",
+        "sha256": "657f28213823d240dd3324d14829702f9ad6f0710f8bdd1c379cb3c447197f48",
+        "size": 27138490
     }
 }
