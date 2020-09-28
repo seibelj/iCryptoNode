@@ -7,12 +7,12 @@
         "size": 3452990
     },
     "monero": {
-        "daemon_version": 9,
-        "daemon_version_short": "0.16.0.3",
-        "daemon_version_long": "Monero 'Nitrogen Nebula' Release (v0.16.0.3)",
-        "url": "https://dlsrc.getmonero.org/cli/monero-linux-armv7-v0.16.0.3.tar.bz2",
-        "sha256": "6df98716bb251257c3aab3cf1ab2a0e5b958ecf25dcf2e058498783a20a84988",
-        "size": 67361012
+        "daemon_version": 10,
+        "daemon_version_short": "0.17.0.0",
+        "daemon_version_long": "Monero 'Oxygen Orion' Release (v0.17.0.0)",
+        "url": "https://downloads.getmonero.org/cli/monero-linux-armv7-v0.17.0.0.tar.bz2",
+        "sha256": "95b424be406346acd0422d2a12598d5f7d7033e20dfdb0e123fd75e185bcf76c",
+        "size": 67606660
     },
     "bitcoin": {
         "daemon_version": 1,
