@@ -1,6 +1,11 @@
 #!/bin/sh
 
 DAEMON_FILE=/etc/icryptonode/daemon/monero/monerod
+
+BANLIST_FILE_DEST=/etc/icryptonode/daemon/monero/block.txt
+BANLIST_FILE_SRC=/var/www/html/icryptonode/node_commands/block.txt
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 BLOCKCHAIN_DIR=/etc/icryptonode/blockchain
 
 LOG_FILE=/etc/icryptonode/blockchain/bitmonero.log
@@ -28,8 +33,14 @@ monero_start () {
         echo "DAEMON_ENABLED = no, not starting monero"
         exit 1
     fi
+    if [ ! -f "$BANLIST_FILE_DEST" ]; then
+        echo "Setting banlist"
+        cp $BANLIST_FILE_SRC $BANLIST_FILE_DEST
+        chown www-data:www-data $BANLIST_FILE_DEST
+        chmod 755 $BANLIST_FILE_DEST
+    fi
     echo "Starting monero"
-    $DAEMON_FILE --detach --db-salvage --log-file $LOG_FILE --data-dir $BLOCKCHAIN_DIR --rpc-bind-ip 0.0.0.0 --rpc-login $DAEMON_USER:$DAEMON_PASS --rpc-bind-port $DAEMON_RPC_PORT --confirm-external-bind
+    $DAEMON_FILE --detach --db-salvage --ban-list $BANLIST_FILE_DEST --log-file $LOG_FILE --data-dir $BLOCKCHAIN_DIR --rpc-bind-ip 0.0.0.0 --rpc-login $DAEMON_USER:$DAEMON_PASS --rpc-bind-port $DAEMON_RPC_PORT --confirm-external-bind
 }
 
 monero_restart () {
