@@ -3,6 +3,7 @@ VUE_GLOBALS.node = {}
 VUE_GLOBALS.node.data = {
     isActive: true,
     isLoading: false,
+    isShuttingDown: false,
     error: "",
     memoryUsed: 0,
     memoryTotal: 0,
@@ -46,6 +47,12 @@ VUE_GLOBALS.node.computed = {
 
             return true
         }
+    },
+    allowNodeShutdown: function() {
+        return !this.tabs.node.isLoading && !this.tabs.node.isShuttingDown
+    },
+    confirmNodeShutdown: function() {
+        return !this.tabs.node.isLoading && this.tabs.node.isShuttingDown
     },
     daemonRunningString: function() {
         return this.tabs.node.isDaemonRunning ? "Yes" : "No"
@@ -113,5 +120,30 @@ VUE_GLOBALS.node.methods = {
             console.log(error)
             vm.loadNodeInfo()
         })
-    }
+    },
+    startNodeShutdown: function() {
+        let vm = this
+        if (vm.tabs.node.isDaemonRunning) {
+            alert("You must disable the blockchain daemon before shutting down to prevent data corruption.")
+            return
+        }
+        vm.tabs.node.isShuttingDown = true
+    },
+    cancelNodeShutdown: function() {
+        let vm = this
+        vm.tabs.node.isShuttingDown = false
+    },
+    executeNodeShutdown: function() {
+        let vm = this
+        vm.tabs.node.isLoading = true
+        axios.post( API_ROOT + '/node/shutdown', {'execute': true}, {timeout: 5000}).then(response => {
+            console.log(response)
+            alert("The node is shutting down. This website will no longer load. "
+                + "Please unplug power from the node and re-plug power in to restart.")
+        }).catch( error => {
+            console.log(error)
+            alert("The node is shutting down. This website will no longer load. "
+                + "Please unplug power from the node and re-plug power in to restart.")
+        })
+    },
 }

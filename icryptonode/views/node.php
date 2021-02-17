@@ -68,6 +68,15 @@
                 <span v-if="tabs.node.isLoading"><i class="fa fa-spinner fa-spin icn-spinner"></i></span>&nbsp;&nbsp;
                 <span v-if="tabs.node.showSuccess" class="has-success">Saved</span>
                 <span v-if="tabs.node.error" class="has-error">{{ tabs.node.error }}</span>
+                <div class="form-group" style="padding-top: 40px;">
+                    <strong><label for="node-port">Shutdown Node</label></strong><br>
+                    <small>Safely shutdown the node. Disable the blockchain daemon before shutting down to ensure no data is corrupted. You should do this before unplugging the power to the node.</small>
+                    <div>
+                        <button :disabled="!allowNodeShutdown" class="btn btn-danger" v-on:click.prevent="startNodeShutdown">Shutdown</button>&nbsp;&nbsp;
+                        <button v-if="tabs.node.isShuttingDown" :disabled="!confirmNodeShutdown" class="btn btn-secondary" v-on:click.prevent="cancelNodeShutdown">Cancel Shutdown</button>&nbsp;&nbsp;
+                        <button v-if="tabs.node.isShuttingDown" :disabled="!confirmNodeShutdown" class="btn btn-primary" v-on:click.prevent="executeNodeShutdown">Confirm Shutdown</button>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
