@@ -99,5 +99,18 @@ class Node
     private function execute_node_cmd($operation) {
         return shell_exec( 'sudo ' . NODE_CMD . ' ' . escapeshellarg($operation) );
     }
+
+    /**
+     * Endpoint for safely shutting down the node
+     * @url POST shutdown
+     *
+     * @param bool execute
+     * @return json
+    */
+    public function shutdown($execute = null) {
+        shell_exec( 'sudo ' . SYSTEM_CMD_DIR . '/shutdown' );
+
+        return array('success' => true);
+    }
 }
 ?>
