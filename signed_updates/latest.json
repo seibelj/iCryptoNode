@@ -7,12 +7,12 @@
         "size": 3454089
     },
     "monero": {
-        "daemon_version": 19,
-        "daemon_version_short": "0.17.2.0",
-        "daemon_version_long": "Monero 'Oxygen Orion' Point Release (v0.17.2.0)",
-        "url": "https://downloads.getmonero.org/cli/monero-linux-armv7-v0.17.2.0.tar.bz2",
-        "sha256": "b5986d6dfbddee14e32b28305dd0dc6352c18b632f569227f2c7265ef7dc5081",
-        "size": 73208293
+        "daemon_version": 20,
+        "daemon_version_short": "0.17.2.3",
+        "daemon_version_long": "Monero 'Oxygen Orion' Point Release (v0.17.2.3)",
+        "url": "https://downloads.getmonero.org/cli/monero-linux-armv7-v0.17.2.3.tar.bz2",
+        "sha256": "9100704b7d98d7bffbf7f72804c0c048f5e60f1dc9f6d4830c633dda3687c419",
+        "size": 73211484
     },
     "bitcoin": {
         "daemon_version": 1,
