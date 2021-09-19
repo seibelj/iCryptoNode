@@ -1,10 +1,10 @@
 {
     "iCryptoNode": {
-        "version": 6,
-        "version_short": "1.3.2",
-        "url": "https://github.com/seibelj/iCryptoNode/releases/download/v1.3.2/icn-v1.3.2.tar.gz",
-        "sha256": "219d5d07806e459d32ad6e3a64f45536b63fc513c6ea0b5f26e8cfdfff1d6abe",
-        "size": 3454089
+        "version": 7,
+        "version_short": "1.4.0",
+        "url": "https://github.com/seibelj/iCryptoNode/releases/download/v1.4.0/icn-v1.4.0.tar.gz",
+        "sha256": "8e34b379f36fae6b6ae2fb7a06bf69dcb90a9b101f8ede8a39b09226629ff939",
+        "size": 3461144
     },
     "monero": {
         "daemon_version": 20,
