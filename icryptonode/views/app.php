@@ -53,7 +53,7 @@
         <?php include "update.php"; ?>
 
         <div style="margin-top: 20px;">
-            <small>Copyright 2019 Jamesys Technologies LLC. By using this software, you agree to the iCryptoNode
+            <small>Copyright 2021 Jamesys Technologies LLC. By using this software, you agree to the iCryptoNode
             <a href="https://icryptonode.com/pages/terms-of-service-privacy-policy" target="_blank">Terms of Service</a></small>
         </div>
         

@@ -3,7 +3,7 @@
         <h3><strong>VPN Settings</strong></h3>
 
         <div class="marg">
-            <small>Using VPN requires an account with <a href="http://www.privateinternetaccess.com/pages/buy-vpn/icrypto" target="_blank">Private Internet Access</a> (PIA). Learn more about why iCryptoNode uses PIA <a href="https://icryptonode.com/pages/anonymous-vpn" target="_blank">here</a>. PIA is the leading anonymous VPN service provider, and enabling VPN on iCryptoNode can significantly improve your blockchain anonymity and prevent tracking of your transactions.</small>
+            <small>Using VPN requires an account with <a href="https://www.privateinternetaccess.com/pages/buy-vpn/icrypto" target="_blank">Private Internet Access</a> (PIA). Learn more about why iCryptoNode uses PIA <a href="https://icryptonode.com/pages/anonymous-vpn" target="_blank">here</a>. PIA is the leading anonymous VPN service provider, and enabling VPN on iCryptoNode can significantly improve your blockchain anonymity and prevent tracking of your transactions.</small>
         </div>
 
         <button :disabled="tabs.vpn.isLoading"
@@ -13,7 +13,7 @@
 
         <div class="marg">
             <div>
-                <strong>Device Public IP:</strong>&nbsp;&nbsp;{{ tabs.vpn.publicIp }}
+                <strong>Device Public IP:</strong>&nbsp;&nbsp;{{ tabs.vpn.publicIp }}&nbsp;&nbsp;<a v-bind:href="'https://whatismyipaddress.com/ip/'+ tabs.vpn.publicIp" target="_blank">Verify Location</a>
             </div>
             <small>This is the public-facing IP address of the Raspberry Pi, <i>not</i> the IP address of this machine running this web browser.</small>
         </div>

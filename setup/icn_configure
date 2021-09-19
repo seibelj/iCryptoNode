@@ -119,7 +119,7 @@ sudo mkdir /etc/config
 sudo touch /etc/config/icryptonode
 uci add icryptonode info
 uci set icryptonode.@info[0].vpn_enabled='no'
-uci set icryptonode.@info[0].vpn_file='US_East.ovpn'
+uci set icryptonode.@info[0].vpn_file='us_east.ovpn'
 uci set icryptonode.@info[0].daemon_version='0'
 uci set icryptonode.@info[0].daemon_enabled='no'
 uci set icryptonode.@info[0].daemon_user='icryptonode'
